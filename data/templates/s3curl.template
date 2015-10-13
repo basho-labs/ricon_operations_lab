@@ -1,0 +1,7 @@
+%awsSecretAccessKeys = (
+    # admin account
+    admin => {
+        id => '{{admin_key}}',
+        key => '{{admin_secret}}',
+    },
+);
