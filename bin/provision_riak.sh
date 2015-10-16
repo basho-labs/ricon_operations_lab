@@ -39,6 +39,8 @@ echo '
 # Added by Vagrant Provisioning Script'  >> /etc/riak/riak.conf
 echo "nodename = riak@$IP_ADDRESS" >> /etc/riak/riak.conf
 echo "buckets.default.allow_mult = true" >> /etc/riak/riak.conf
+echo "listener.http.internal = 0.0.0.0:8098" >> /etc/riak/riak.conf
+
 
 insert_attribute riak riak@$IP_ADDRESS
 insert_service riak riak@$IP_ADDRESS

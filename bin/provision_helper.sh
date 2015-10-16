@@ -11,7 +11,7 @@ if [ ! -f $JSONFile ]
 fi
 if [ ! -f /usr/local/bin/jq ]
   then
-    cp /vagrant/data/jq /usr/local/bin/jq
+    cp /vagrant/data/applications/jq /usr/local/bin/jq
     chmod +x /usr/local/bin/jq
 fi
 
