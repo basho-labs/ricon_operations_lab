@@ -1,4 +1,5 @@
 #! /bin/bash
+source /vagrant/bin/provision_helper.sh
 
 echo "Installing tmux..."
 cp /vagrant/data/applications/tmux /usr/local/bin/tmux
