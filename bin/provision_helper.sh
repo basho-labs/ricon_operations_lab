@@ -2,7 +2,7 @@
 
 # provision_helper -- helper functions and configuration for the json cluster datastore
 
-
+mkdir -p "/vagrant/data/work"
 JSONFile="/vagrant/data/work/cluster.json"
 
 if [ ! -f $JSONFile ] 
