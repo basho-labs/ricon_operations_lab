@@ -1,5 +1,4 @@
 #! /bin/bash
-source /vagrant/bin/provision_helper.sh
 
 # provision_riak -- Installs and configures Riak as a cluster of 1
 
@@ -40,10 +39,6 @@ echo '
 echo "nodename = riak@$IP_ADDRESS" >> /etc/riak/riak.conf
 echo "buckets.default.allow_mult = true" >> /etc/riak/riak.conf
 echo "listener.http.internal = 0.0.0.0:8098" >> /etc/riak/riak.conf
-
-
-insert_attribute riak riak@$IP_ADDRESS
-insert_service riak riak@$IP_ADDRESS
 
 echo "* Enabling and Starting Riak"
 chkconfig riak on
