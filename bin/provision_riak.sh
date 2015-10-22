@@ -6,15 +6,15 @@ source /vagrant/bin/provision_helper.sh
 echo "Installing Riak..."
 
 echo "* Checking for cached components"
-if [ ! -f "/vagrant/data/rpmcache/riak-2.0.5-1.el6.x86_64.rpm" ] 
+if [ ! -f "/vagrant/data/rpmcache/riak-2.0.6-1.el6.x86_64.rpm" ] 
   then
-    echo "   - Downloading Riak 2.0.5 Package into cache"
-    wget -q --output-document=/vagrant/data/riak-2.0.5-1.el6.x86_64.rpm http://s3.amazonaws.com/downloads.basho.com/riak/2.0/2.0.5/rhel/6/riak-2.0.5-1.el6.x86_64.rpm 
+    echo "   - Downloading Riak 2.0.6 Package into cache"
+    wget -q --output-document=/vagrant/data/rpmcache/riak-2.0.6-1.el6.x86_64.rpm http://s3.amazonaws.com/downloads.basho.com/riak/2.0/2.0.6/rhel/6/riak-2.0.6-1.el6.x86_64.rpm 
 fi
 
 echo "* Installing Riak Package"
 yum -y --nogpgcheck --noplugins localinstall \
-  /vagrant/data/rpmcache/riak-2.0.5-1.el6.x86_64.rpm
+  /vagrant/data/rpmcache/riak-2.0.6-1.el6.x86_64.rpm
 
 if [ ! -d "/etc/riak" ] 
   then
