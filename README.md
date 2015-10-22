@@ -2,4 +2,4 @@
 
 The preconfigured environments live in branches of this project.
 
-More coming...
+The documentation for the labs lives in the `labs` subdirectory
