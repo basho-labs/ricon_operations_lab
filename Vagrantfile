@@ -11,7 +11,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     app.vm.hostname = "lb.riak.local"
     app.vm.network "private_network", ip: "192.168.228.10"
     app.vm.provision "app", type: "shell", path: "bin/provision_app.sh"
-  end 
+    app.vm.network "forwarded_port", guest: 80, host: 10001
+    app.vm.network "forwarded_port", guest: 10050, host: 10050
+    app.vm.network "forwarded_port", guest: 10051, host: 10051
+  end
 
   config.vm.define "node1" do |node1|
     node1.vm.hostname = "node1.riak.local"
