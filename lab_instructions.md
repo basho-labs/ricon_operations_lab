@@ -24,6 +24,21 @@ command invocation.
 
 > **<span style="color:red">Warning</span>**: This signifies a warning or caution.
 
+<!--
+Table of contents:
+
+Lab 0: Start up the lab environment
+Lab 1: Building a cluster
+Lab 2: Configuring the cluster for the application
+Lab 3: Sample Application
+Lab 4: Break Some Things -- well, not break, really
+Lab 5: Riak Attach is Magic
+Lab 5: Breaking Bad (destructive operations)
+Lab 6: Fixing Bad (riak_kv_vnode:repair)
+Lab 7: Monitoring
+Lab 8: ????
+-->
+
 Lab 0: Start up the lab environment
 ---
 
