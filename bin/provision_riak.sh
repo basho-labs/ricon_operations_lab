@@ -13,8 +13,7 @@ if [ ! -f "/vagrant/data/rpmcache/riak-2.0.6-1.el6.x86_64.rpm" ]
 fi
 
 echo "* Installing Riak Package"
-yum -y --nogpgcheck --noplugins localinstall \
-  /vagrant/data/rpmcache/riak-2.0.6-1.el6.x86_64.rpm
+  rpm -Uv /vagrant/data/rpmcache/riak-2.0.6-1.el6.x86_64.rpm
 
 if [ ! -d "/etc/riak" ] 
   then
