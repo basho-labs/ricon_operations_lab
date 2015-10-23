@@ -95,5 +95,23 @@ The lab environment consists of a Vagrantfile that will build 6 CentOS 6.7 nodes
 
 To bring up the environment, type **<span style="font-family:monospace">./start.sh</span>**. Vagrant will download the box file if necessary, start the virtual machines, and provision the software on the nodes.  Depending on your internet connection, the first startup of the cluster will take more than 5 minutes.
 
-The *start.sh* script just makes runs the *vagrant up* commands on the nodes in parallel
+The *start.sh* script just runs the *vagrant up* commands on the app node (which will download the box file if it is not present and then the nodes in parallel in order to speed up start time.  If start time is less of a concern, you can simply run **<span style="font-family:monospace">vagrant up</span>**
+
+You can verify that the environment is up and running by running **<span style="font-family:monospace">vagrant status</span>**.  You should see the following:
+
+```
+$ vagrant status
+Current machine states:
+
+app                       running (virtualbox)
+node1                     running (virtualbox)
+node2                     running (virtualbox)
+node3                     running (virtualbox)
+node4                     running (virtualbox)
+node5                     running (virtualbox)
+
+This environment represents multiple VMs. The VMs are all listed
+above with their current state. For more information about a specific
+VM, run `vagrant status NAME`.
+```
 
