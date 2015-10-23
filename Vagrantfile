@@ -8,7 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "bento/centos-6.7"
 
   config.vm.define "app" do |app|
-    app.vm.hostname = "lb.riak.local"
+    app.vm.hostname = "app.riak.local"
     app.vm.network "private_network", ip: "192.168.228.10"
     app.vm.provision "app", type: "shell", path: "bin/provision_app.sh"
     app.vm.network "forwarded_port", guest: 80, host: 10001
