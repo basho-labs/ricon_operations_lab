@@ -13,3 +13,6 @@ others:-sc 192.168.228.12 -sc 192.168.228.13 -sc 192.168.228.14 -sc 192.168.228.
 node1:-sc 192.168.228.11
 riak:-cs node1 -cs others
 " > ~/.tmux-cssh
+
+cp ~/.tmux-cssh /home/vagrant
+chown vagrant /home/vagrant/.tmux-cssh
