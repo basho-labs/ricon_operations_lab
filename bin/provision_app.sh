@@ -1,6 +1,13 @@
 #! /bin/bash
 source /vagrant/bin/provision_helper.sh
 
+echo "Generating Root Keypair"
+ssh-keygen -t rsa -C "root@riak.local" -f /root/.ssh/id_rsa -N ""
+chmod 600 /root/.ssh/id_rsa* 
+cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/authorized_keys 
+cp /root/.ssh/id_rsa* /vagrant/data/work
+
 echo "Installing tmux..."
 cp /vagrant/data/applications/tmux /usr/local/bin/tmux
 

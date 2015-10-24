@@ -2,8 +2,12 @@
 source /vagrant/bin/provision_helper.sh
 
 # provision_riak -- Installs and configures Riak as a cluster of 1
-
-echo "Installing Riak..."
+mkdir /root/.ssh
+chmod 700 /root/.ssh
+cp /vagrant/data/work/id_rsa* /root/.ssh
+chmod 600 /root/.ssh/id_rsa*
+cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/authorized_keys 
 
 echo "* Checking for cached components"
 if [ ! -f "/vagrant/data/rpmcache/riak-2.0.6-1.el6.x86_64.rpm" ] 
