@@ -11,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     app.vm.hostname = "app.riak.local"
     app.vm.network "private_network", ip: "192.168.228.10"
     app.vm.provision "app", type: "shell", path: "bin/provision_app.sh"
-    app.vm.network "forwarded_port", guest: 80, host: 10001
+    app.vm.network "forwarded_port", guest: 4567, host: 4567  #sinatra port for application
     app.vm.network "forwarded_port", guest: 10050, host: 10050
     app.vm.network "forwarded_port", guest: 10051, host: 10051
   end
