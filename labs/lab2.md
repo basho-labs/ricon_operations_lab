@@ -11,6 +11,7 @@ From the *Operations_Lab* folder:
 * Connect to the *app* box with **<span style="font-family:monospace">vagrant ssh app</span>**  
 * Start a root shell with **<span style="font-family:monospace">sudo su -</span>**
 * Start a tmux-ssh session to all of the nodes with **<span style="font-family:monospace">tmux-cssh -cs riak</span>**
+<<TODO: node1
 
 #### Edit the configuration
 
@@ -26,7 +27,7 @@ Edit the configuration file by typing **<span style="font-family:monospace">vi /
 
 * Press **<span style="font-family:monospace">i</span>** enter Insert mode. 
 
-* Press the Left Arrow key to move over one space.
+* Press the Right Arrow key to move over one space.
 
 * Press Enter to move to the beginning of a new line.
 
@@ -57,7 +58,7 @@ Perform a rolling restart of the cluster nodes by connecting to each node in tur
 
 * (Optional, Recommended) Wait for transfers to complete by watching  **<span style="font-family:monospace">riak-admin transfers</span>**
 
-* Press **<span style="font-family:monospace">Ctrl-D</span>** three times to exit all of the running shells and return to the *Operations_Lab* folder.
+* Press **<span style="font-family:monospace">Ctrl-D</span>** two times to exit all of the running shells and return to the *Operations_Lab* folder.
 * Repeat the process on the next node.
 
 #### Clean up the old backends
@@ -70,3 +71,5 @@ From the *Operations_Lab* folder:
 * Press **<span style="font-family:monospace">Ctrl-D</span>** three times to exit all of the running shells and return to the *Operations_Lab* folder.
 
 
+We now have our five node cluster using LevelDB as the backend
+ 
