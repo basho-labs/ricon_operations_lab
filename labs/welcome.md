@@ -78,12 +78,12 @@ Locate the folder into which you copied the Vagrant environment.  For the purpos
 At a shell prompt, Return the following commands:
 
 **<span style="font-family:monospace">cd ~/Operations_Lab</span>**  
-**<span style="font-family:monospace">ls -al</span>**
+**<span style="font-family:monospace">ls</span>**
 
 You should have a directory listing similar to the following:
 
 ```
-README.md   Vagrantfile bin         data
+README.md   Vagrantfile bin         data        labs        start.sh
 ```
 
 #### The lab environment
