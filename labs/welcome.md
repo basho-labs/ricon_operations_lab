@@ -8,6 +8,11 @@ To get the day started, you will need to have downloaded the Vagrantbox used for
 * VirtualBox 5.0.6 plus the VirtualBox Extensions
 * Checked out copy of the [*`ricon_operations_lab`*](http://github.com/basho-labs/riak_operations_lab) project
 
+**Windows Requirements:**
+
+* cygwin
+* OpenSSH package
+
 **Offline Requirements:**
 
 * local copy of the [bento/centos-6.7](https://atlas.hashicorp.com/bento/boxes/centos-6.7) box. (v2.2.2)
