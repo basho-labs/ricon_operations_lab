@@ -3,11 +3,15 @@ Lab 7: Monitoring
 
 <!-- TODO: Rewrite these instructions with the knowledge of the basho/centos-6.7 box. -->
 
-Setting up a good monitoring solution is an enormous piece of operating a good Riak installation. This probably isn't the first time you've heard something like this, and I will be shocked if it's the last. Here. I'll make sure that won't be the last you've head of it; Setting up a good monitoring solution is an enormous piece of operating a good Riak installation.
+Setting up a good monitoring solution is an enormous piece of operating a good Riak installation. This probably isn't the first time you've heard something like this, and I will be shocked if it's the last. Here. I'll make sure that won't be the last you've heard of it; Setting up a good monitoring solution is an enormous piece of operating a good Riak installation.
 
-In this lab, we'll be using the [Zabbix Monitoring tool][zabbix] to set up a Zabbix Server on our 'app' node and Zabbix Agents on our Riak nodes, and see exactly how much effort it takes to get basic monitoring up and running.
+In this lab, we'll be using the [Zabbix Monitoring tool][zabbix] to set up a Zabbix Server on our _app_ node and Zabbix Agents on our Riak nodes, and see exactly how much effort it takes to get basic monitoring up and running.
 
-We're going to spend a lot of time on the app node, **<span style="font-family:monospace">tmux</span>**ing into other nodes, and performing setup that way. We're going to want root permissions, so once we have the **<span style="font-family:monospace">vagrant ssh</span>** session up, go ahead and enter a **<span style="font-family:monospace">su -</span>** session entering the password 'vagrant',
+We've chosen Zabbix for this lab, primarily because it will run locally on our _app_ nodes. It's a **very** good choice to look closely at your needs and options before choosing a monitoring solution. Hosted platforms such as [Datadog][datadog] and [New Relic][new_relic] will often serve production-level requirements much better than a local solution.
+
+<br /><br />
+
+We're going to spend a lot of time on the app node, **<span style="font-family:monospace">tmux</span>**ing into other nodes, so make sure you're ssh'd into the _app_ node, and are running with elevated permissions.
 
 **<span style="font-family:monospace">vagrant ssh app</span>**  
 **<span style="font-family:monospace">su -</span>**
@@ -15,51 +19,34 @@ We're going to spend a lot of time on the app node, **<span style="font-family:m
 
 #### Setting up the Zabbix Agents on Our Cluster
 
-First let's install and setup the Zabbix Agent on all of the riak boxes. Enter a **<span style="font-family:monospace">tmux-cssh</span>** session with all of the Riak nodes in this cluster,
+
+First let's setup the Zabbix Agent on all of the riak boxes. Enter a **<span style="font-family:monospace">tmux-cssh</span>** session with all of the Riak nodes in this cluster,
 
 **<span style="font-family:monospace">tmux-cssh -cs riak</span>**
 
-Zabbix packages aren't tracked by the default RHEL package repositories, so we're going to add their repository using rpm, and use yum to perform the installation. We're also going to go ahead an install Perl now, just to save ourselves a step later.
+Though we already have the Zabbix Agent installed on the basho/centos-6.7 box, we still need to teach those agents how to understand the output of **<span style="font-family:monospace">riak-admin status</span>**. Along with the packages, these boxed have already cloned Basho's [Riak Zabbix agent][riak-zabbix] repository into /vagrant/data/riak-zabbix.
 
-**<span style="font-family:monospace">rpm -ivh http://repo.zabbix.com/zabbix/2.4/rhel/6/x86_64/zabbix-release-2.4-1.el6.noarch.rpm</span>**  
-**<span style="font-family:monospace">yum install zabbix-agent perl</span>**
+<br />
 
-We have to confirm that we want to install the agent by entering **<span style ="font-family:monospace">y</span>** when yum presents us with,
+To include the Riak statistics in the set of metrics gathered by Zabbix, all we have to do is copy userparameter\_riak.conf from Riak Zabbix into the Zabbix agent's zabbix\_agentd.d directory.
 
-```
-Total download size: 334 k
-Installed size: 1.1 M
-Is this ok [y/N]:
-```
+**<span style="font-family:monospace">cp /vagrant/data/riak-zabbix/templates/userparameter\_riak.conf /etc/zabbix/zabbix\_agentd.d/</span>**
 
-and we have to accept a couple of GPG keys with **<span style="font- family:monospace">y</span>** when presented with e.g.
+We still need to give the Zabbix agent some output to read, as it's unable to pull directly from the stats endpoints. For this, we're going to setup an automated job that will generate a riak-admin\_status.tmp file that the agent will extract data from.
 
-```
-warning: rpmts_HdrFromFdno: Header V4 DSA/SHA1 Signature, key ID 79ea5ed4: NOKEY
-Retrieving key from file:///etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX
-Importing GPG key 0x79EA5ED4:
- Userid : Zabbix SIA <packager@zabbix.com>
- Package: zabbix-release-2.4-1.el6.noarch (installed)
- From   : /etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX
-Is this ok [y/N]:
-```
-
-Now that we have the Zabbix Agent installed, we want to teach it how to understand the output of **<span style="font-family:monospace">riak-admin status</span>**. Usually this is where we'd go get Git and clone into Basho's [Riak Zabbix][riak-zabbix] repository, but we like skipping steps here. Included in this repository is a recent version of the Riak Zabbix package. To include the Riak statistics in the set of metrics gathered by Zabbix, all we have to do is copy userparameter_riak.conf from Riak Zabbix into the Zabbix agent's zabbix_agentd.d directory.
-
-**<span style="font-family:monospace">cp /vagrant/data/riak-zabbix/templates/userparameter_riak.conf /etc/zabbix/zabbix_agentd.d/</span>**
-
-We still need to give the Zabbix agent some output to read, though. For that, we're going to setup an automated job that will generate a riak-admin_status.tmp file.
-
-Why are we using crontab, and why so ugly? We're using crontab so the Zabbix agent doesn't have to run under escalated privileges. The hacky **<span style="font- family:monospace">></span>** then **<span style="font- family:monospace">mv</span>** is to prevent the agent from attempting to read the tmp file while riak-admin is running, causing erroneous NULL results
-
-Open up the crontab in your default editor (probably vi. Press **<span style="font- family:monospace">i</span>** to begin editing, **<span style="font- family:monospace">esc</span>** to finish, **<span style="font- family:monospace">:wq</span>** to save and quit) with **<span style="font- family:monospace">crontab -u riak -e</span>** and add in the below line.
+Open up the crontab in your default editor with **<span style="font- family:monospace">crontab -u riak -e</span>** and add in the below line.
 
 **<span style="font-family:monospace">\* \* \* \* \* /usr/sbin/riak-admin status > /var/lib/riak/riak-admin_status.new && mv /var/lib/riak/riak-admin_status.new /var/lib/riak/riak-admin_status.tmp</span>**
 
-Next, we're going to make a couple quick modifications to agent's config file that will allow it to connect to the Zabbix server that we're going to set up next.
+Why are we using crontab, and why so ugly? We're using crontab so the Zabbix agent doesn't have to run under escalated privileges. The hacky **<span style="font- family:monospace">></span>** then **<span style="font- family:monospace">mv</span>** is to prevent the agent from attempting to read the tmp file while riak-admin is running, causing erroneous NULL results
 
-**<span style="font-family:monospace">perl -pi -e 's/Server=127.0.0.1/Server=192.168.228.10/' /etc/zabbix/zabbix_agentd.conf  </span>**
-**<span style="font-family:monospace">perl -pi -e 's/ServerActive=127.0.0.1/ServerActive=192.168.228.10/' /etc/zabbix/zabbix_agentd.conf</span>**
+<br />
+
+Next, we're going to make a couple quick modifications to agent's config file that will allow it to connect to the Zabbix server that we're going to set up next. The below _Perl_ calls will tell Zabbix Agents to look for the server at 192.168.228.10, rather than at the local host.
+
+
+**<span style="font-family:monospace">perl -pi -e \'s/Server=127.0.0.1/Server=192.168.228.10/\' /etc/zabbix/zabbix_agentd.conf  </span>**
+**<span style="font-family:monospace">perl -pi -e \'s/ServerActive=127.0.0.1/ServerActive=192.168.228.10/\' /etc/zabbix/zabbix_agentd.conf</span>**
 
 Finally, we kick off the Zabbix agents.
 
@@ -69,17 +56,7 @@ Press **<span style="font-family:monospace">Ctrl+D</span>** once to exit the tmu
 
 #### Setting up the Zabbix Server on Our App
 
-Zabbix is able to use a number of backend databases, and leaves it to the user to correctly setup said database before the Zabbix server starts up. We'll be using the MySQL backend, because it's the one that's listed at the top of Zabbix's install instructions. I'm sorry, but I really have no further justification for this choice.
-
-To start off, we're going to add the same Zabbix repository to yum that we did for the Zabbix agent. This time we're going to install the Zabbix MySQL server, the Zabbix MySQL web frontend, as well as MySQL itself, and perl for good measure.
-
-**<span style="font-family:monospace">rpm -ivh http://repo.zabbix.com/zabbix/2.4/rhel/6/x86_64/zabbix-release-2.4-1.el6.noarch.rpm  </span>**
-**<span style="font-family:monospace">yum install zabbix-server-mysql zabbix-web-mysql mysql mysql-server perl</span>**
-
-You'll have to hit **<span style="font-family:monospace">y</span>** a few more times here to accept the install plan and GPG keys, again. Be aware, this is not a small download (~130MB), so it may take some time.
-<!-- #TODO: Consider pre-installing some/all of this? The `vagrant up` already
-takes a good amount of time. We could add to it, and use that time for going
-over concepts, maybe? -->
+Zabbix is able to use a number of backend databases to store historical data and drive the available graphs, but leaves it to the user to correctly setup said database. We'll be using the MySQL backend, because it's the one that's listed at the top of Zabbix's install instructions. I'm sorry, but I really have no further justification for this choice.
 
 Before starting up the Zabbix server, we have to set up the MySQL database. Enter an interactive MqSQL session by fist starting the MySQL daemon with,
 
@@ -92,7 +69,7 @@ And then entering,
 In that session, enter the four below commands,
 
 **<span style="font-family:monospace">create database zabbix character set utf8 collate utf8_bin;  </span>**
-**<span style="font-family:monospace">grant all privileges on zabbix.* to zabbix@localhost identified by 'zabbix';  </span>**
+**<span style="font-family:monospace">grant all privileges on zabbix.* to zabbix@localhost identified by \'zabbix\';  </span>**
 **<span style="font-family:monospace">flush privileges;</span>**  
 **<span style="font-family:monospace">exit;</span>**
 
@@ -102,26 +79,29 @@ With the database set up, we load it with the default set of schemas, images, an
 **<span style="font-family:monospace">mysql zabbix < /usr/share/doc/zabbix-server-mysql-2.4.6/create/images.sql  </span>**
 **<span style="font-family:monospace">mysql zabbix < /usr/share/doc/zabbix-server-mysql-2.4.6/create/data.sql</span>**
 
-With a backing database setup, we need to tell Zabbix how to talk to that database. To do so, we just append a couple of configuration options to the server's configuration file,
+With a backing database setup, we won't need to touch MySQL for the rest of this demo. We do still need to tell Zabbix that data has been set up, though. To do so, we just append a two configuration options to the server's configuration file,
 
-**<span style="font-family:monospace">echo "DBHost=localhost" >> /etc/zabbix/zabbix_server.conf</span>**  
-**<span style="font-family:monospace">echo "DBPassword=zabbix" >> /etc/zabbix/zabbix_server.conf</span>**
+**<span style="font-family:monospace">echo \"DBHost=localhost\" >> /etc/zabbix/zabbix_server.conf</span>**  
+**<span style="font-family:monospace">echo \"DBPassword=zabbix\" >> /etc/zabbix/zabbix_server.conf</span>**
 
-With MySQL set up, and the configurations set, we're ready to start the Zabbix server.
+Now we're ready to start the Zabbix server.
 
 **<span style="font-family:monospace">service zabbix-server start</span>**
 
-With that done, we have a working Zabbix server running, but we don't have a frontend with which to control or interact with it. Luckily for us, the PHP MySQL frontend it almost completely set up for us out of the box; We just need to make one modification to the Apache's Zabbix configuration file,
+<br />
 
-> **Note**: We're setting the local timezone to Los_Angeles here because, frankly, I'm not sure PHP would know what to do with San_Francisco
+With that done, we have a working Zabbix server running, but we don't have a frontend with which to control or interact with it. Luckily for us, the PHP frontend is almost completely set up for us out of the box; We just need to make one modification to the Apache's Zabbix configuration file,
 
-**<span style="font-family:monospace">perl -pi -e 's/# php_value date.timezone Europe\/Riga/php_value date.timezone America\/Los_Angeles/' /etc/httpd/conf.d/zabbix.conf</span>**
+> **Note**: We're setting the local timezone to Los\_Angeles here because, frankly, I'm not sure PHP would know what to do with San\_Francisco
+
+**<span style="font-family:monospace">perl -pi -e \'s/# php\_value date.timezone Europe\/Riga/php\_value date.timezone America\/Los\_Angeles/\' /etc/httpd/conf.d/zabbix.conf</span>**
 
 Now we get to start the HTTP daemon.
 
 **<span style="font-family:monospace">service httpd start</span>**
 
-With all this done, we should be able to access the web frontend on our host machines through either localhost:10001/zabbix, or 192.168.228.10/zabbix
+With all this done, we should be able to access the web frontend on our host machines through 192.168.228.10/zabbix
+
 
 #### Setting Up the Web Front End
 
@@ -142,6 +122,7 @@ When first loading up 192.168.228.10/zabbix, you should be greeted by a Welcome 
     * **Datbase name**  -- should remain **<span style="font-family:monospace">zabbix</span>**
     * **User**          -- needs to be changed to **<span style="font-family:monospace">zabbix</span>**
     * **Password**      -- needs to be changed to **<span style="font-family:monospace">zabbix</span>**
+    Once all configurations have been set, press the _Test connection_ button.
 4. Zabbix server details  
     Nothing needs to be done.
 5. Pre-Installation summary  
@@ -181,5 +162,7 @@ Before we add this Host, we're going to want to have it load the Riak template w
 
 
 [zabbix]: http://www.zabbix.com/
+[datadog]: https://www.datadoghq.com/
+[new_relic]: http://newrelic.com/
 [riak-zabbix]: https://github.com/basho/riak-zabbix
 [riak-zabbix_building]: https://github.com/basho/riak-zabbix#building

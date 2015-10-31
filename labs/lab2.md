@@ -11,7 +11,6 @@ From the *Operations_Lab* folder:
 * Connect to the *app* box with **<span style="font-family:monospace">vagrant ssh app</span>**  
 * Start a root shell with **<span style="font-family:monospace">sudo su -</span>**
 * Start a tmux-ssh session to all of the nodes with **<span style="font-family:monospace">tmux-cssh -cs riak</span>**
-<<TODO: node1
 
 #### Edit the configuration
 

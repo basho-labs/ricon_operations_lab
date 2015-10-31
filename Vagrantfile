@@ -7,6 +7,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = "basho/centos-6.7"
 
+  # Working around a potential stale ssh key bug. Or a stale ssh key
+  # misconfiguration. Either way, this should allow us to make sure fresh keys
+  # are generated on `up`.
   config.ssh.username = "vagrant"
   config.ssh.password = "vagrant"
 
@@ -16,8 +19,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     app.vm.provision "app", type: "shell", path: "bin/provision_app.sh"
     app.vm.network "forwarded_port", guest: 4567, host: 4567  # Sinatra port for application
     app.vm.network "forwarded_port", guest: 8080, host: 8080  # Unicorn port for application
-    app.vm.network "forwarded_port", guest: 10050, host: 10050
-    app.vm.network "forwarded_port", guest: 10051, host: 10051
   end
 
   config.vm.define "node1" do |node1|

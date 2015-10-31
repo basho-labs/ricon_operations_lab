@@ -24,6 +24,16 @@ We'll be using `rvm` to install Ruby 1.9.3, which comes with Gem and Bundler, wh
     cd riak-inverted-index-demo
     bundle install
 
+With Ruby and the correct Gem set installed, want want to expose those binaries to the root user in case we need to run an application in elevated privileges. Which is a pretty hacky thing to do, admittedly. And we're going to get it done with an equally hacky trick.
+
+Please never do this on a real-world system.
+
+    echo '' >> ~/.bash_profile
+    echo '[[ -s "/home/vagrant/.rvm/scripts/rvm" ]] && source "/home/vagrant/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*' >> ~/.bash_profile
+
+    echo '' >> ~/.bashrc
+    echo 'export PATH="$PATH:/home/vagrant/.rvm/bin" # Add RVM to PATH for scripting' >> ~/.bashrc
+
 
 #### Zabbix Client
 
