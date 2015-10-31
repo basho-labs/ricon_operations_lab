@@ -2,13 +2,19 @@
 source /vagrant/bin/provision_helper.sh
 
 # provision_riak -- Installs and configures Riak as a cluster of 1
-mkdir /root/.ssh
-chmod 700 /root/.ssh
-cp /vagrant/data/work/id_rsa* /root/.ssh
-chmod 600 /root/.ssh/id_rsa*
-cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
-cat /home/vagrant/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
-chmod 600 /root/.ssh/authorized_keys 
+echo "* Installing Generated Root Key (if available)"
+if [ -f "/vagrant/data/work/id_rsa" ] 
+  then
+        echo "    - Found a key, installing..."
+        mkdir /root/.ssh
+        chmod 700 /root/.ssh
+        cp /vagrant/data/work/id_rsa* /root/.ssh
+        cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+        chmod 600 -R /root/.ssh/*
+
+        cp /vagrant/data/work/id_rsa* /home/vagrant/.ssh
+        chown vagrant:vagrant /home/vagrant/.ssh/id_rsa*
+fi
 
 echo "* Checking for cached components"
 if [ ! -f "/vagrant/data/rpmcache/riak-2.0.6-1.el6.x86_64.rpm" ] 
