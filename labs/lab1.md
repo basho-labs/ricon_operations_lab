@@ -30,15 +30,31 @@ node1:-sc 192.168.228.11
 others:-sc 192.168.228.12 -sc 192.168.228.13 -sc 192.168.228.14 -sc 192.168.228.15
 riak:-cs node1 -cs others
 ```
+
+Let's connect to all of the nodes and check that Riak is up and running
+
+Run:
+
+```
+tmux-cssh -u root -cs riak
+```
+
+Since it is the first time that we have connected to these nodes via SSH we will be presented with RSA key fingerprints and asked if we want to continue connecting.  These sessions will have keyboard input linked to all of the panes simultaneously.  Type **<span style="font-family:monospace">yes</span>** and press Return.
+
+We will now be at a root prompt on each of the nodes, as indicated by the *#* at the end.  Run **<span style="font-family:monospace">riak ping</span>** and press Enter.  Each node should return <span style="font-family:monospace">pong</span> as below:
+
+```
+[root@node1 ~]# riak ping
+pong 
+```
+
+If any of the nodes return something other than <span style="font-family:monospace">pong</span>, please let your instructor know.  If all of then nodes return <span style="font-family:monospace">pong</span>, then press **<span style="font-family:monospace">Ctrl-D</span>** once to exit the tmux session.  You should now be back at a vagrant user prompt on app.
+
+
 Since the provision script automatically installs and starts Riak on each node, we just need to connect to the **others** nodes and issue the command to join them to *node1*.
 
-Type the **<span style="font-family:monospace">sudo su -</span>** command to start a root shell on *app*
+Run **<span style="font-family:monospace">tmux-cssh -u root -cs others</span>** to open up a tmux session with a pane connected to all of the Riak nodes except for *node1*.  
 
-Run **<span style="font-family:monospace">tmux-cssh -cs others</span>** to open up a tmux session with a pane connected to all of the Riak nodes except for *node1*.  These sessions will have keyboard input linked to all of the panes simultaneously.
-
-Since it is the first time that we have connected to these nodes via SSH we will be presented with RSA key fingerprints and asked if we want to continue connecting.  Type **<span style="font-family:monospace">yes</span>** and press Return.
-
-You should now be logged in as the root user on each node and at a root-level prompt ending with a #.
 
 #### Join the nodes to *node1*
 
@@ -53,7 +69,7 @@ Each node should reply back with a message indicating that a join request has be
 Success: staged join request for 'riak@192.168.228.12' to 'riak@192.168.228.11
 ```
 
-Press **<span style="font-family:monospace">Ctrl-D</span>** once to exit the tmux session.  You should now be back at a root prompt on app. Press **<span style="font-family:monospace">Ctrl-D</span>** two more times and you should be back in the *Operations_Lab* folder on your local machine.
+Press **<span style="font-family:monospace">Ctrl-D</span>** once to exit the tmux session.  You should now be back at a vagrant user prompt on app. Press **<span style="font-family:monospace">Ctrl-D</span>** one more time and you should be back in the *Operations_Lab* folder on your local machine.
 
 #### Plan and commit
 
