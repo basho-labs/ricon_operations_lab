@@ -6,7 +6,7 @@ To get the day started, you will need to have downloaded the Vagrantbox used for
 
 * Vagrant 1.7.4
 * VirtualBox 5.0.6 plus the VirtualBox Extensions
-* Checked out copy of the [*`ricon_operations_lab`*](http://github.com/basho-labs/riak_operations_lab) project
+* Checked out copy of the [*`ricon_operations_lab`*](http://github.com/basho-labs/ricon_operations_lab) project
 
 **Windows Requirements:**
 
