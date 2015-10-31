@@ -7,6 +7,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = "basho/centos-6.7"
 
+  config.ssh.username = "vagrant"
+  config.ssh.password = "vagrant"
+
   config.vm.define "app" do |app|
     app.vm.hostname = "app.riak.local"
     app.vm.network "private_network", ip: "192.168.228.10"
