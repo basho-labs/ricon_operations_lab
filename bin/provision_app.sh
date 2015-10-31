@@ -25,6 +25,10 @@ echo "Creating ~/.tmux-cssh..."
 echo "
 others:-u root -sc 192.168.228.12 -sc 192.168.228.13 -sc 192.168.228.14 -sc 192.168.228.15
 node1:-u root -sc 192.168.228.11
+node2:-u root -sc 192.168.228.12
+node3:-u root -sc 192.168.228.13
+node4:-u root -sc 192.168.228.14
+node5:-u root -sc 192.168.228.15
 riak:-cs node1 -cs others
 " > ~/.tmux-cssh
 
