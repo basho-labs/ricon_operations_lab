@@ -3,6 +3,8 @@ Lab 3:  The Sample Application
 
 *Objective*: By the end of this lesson you will have downloaded and installed the inverted index sample application
 
+<!-- TODO: Update these install instructions w/ knowledge of the basho/centos-6.7 box -->
+
 ```
 yum install -y git gcc gcc-c++ patch readline readline-devel zlib zlib-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison iconv-devel ruby ruby-devel rubygems
 
@@ -29,7 +31,7 @@ Test with
 bundle exec ruby mock.rb -o 0.0.0.0
 ```
 
-Run with 
+Run with
 
 ```
 bundle exec unicorn -c unicorn.rb -l 0.0.0.0:8080

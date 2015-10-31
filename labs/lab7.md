@@ -1,6 +1,8 @@
 Lab 7: Monitoring
 ----
 
+<!-- TODO: Rewrite these instructions with the knowledge of the basho/centos-6.7 box. -->
+
 Setting up a good monitoring solution is an enormous piece of operating a good Riak installation. This probably isn't the first time you've heard something like this, and I will be shocked if it's the last. Here. I'll make sure that won't be the last you've head of it; Setting up a good monitoring solution is an enormous piece of operating a good Riak installation.
 
 In this lab, we'll be using the [Zabbix Monitoring tool][zabbix] to set up a Zabbix Server on our 'app' node and Zabbix Agents on our Riak nodes, and see exactly how much effort it takes to get basic monitoring up and running.

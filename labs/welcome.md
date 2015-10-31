@@ -15,17 +15,23 @@ To get the day started, you will need to have downloaded the Vagrantbox used for
 
 **Offline Requirements:**
 
-* local copy of the [bento/centos-6.7](https://atlas.hashicorp.com/bento/boxes/centos-6.7) box. (v2.2.2)
-    * install the instructor copy with **<span style="font-family:monospace">vagrant box add package.box --name bento/centos-6.7 --box-version 2.2.2</span>**
+* local copy of the custom [basho/centos-6.7](https://www.dropbox.com/s/rdsx5ix5bmbqql5/basho-VAGRANTSLASH-centos-6.7.box?dl=0)  
+    This box is based off of v2.2.2 of the [bento/centos-6.7](https://atlas.hashicorp.com/bento/boxes/centos-6.7) box.
+
+    * fetch it with `wget https://www.dropbox.com/s/rdsx5ix5bmbqql5/basho-VAGRANTSLASH-centos-6.7.box?dl=0`
+    * Add it to your copy of vagrant with **<span style="font-family:monospace">vagrant box add basho-VAGRANTSLASH-centos-6.7.box --name basho-VAGRANTSLASH-centos-6.7 --checksum-type md5 --checksum 1bee68d0c3fd3df21c1a80a0ed40fbe3</span>**
+
+
+* local copies of necessary git repositories
+
+    * [riak-inverted-index-demo](https://github.com/drewkerrigan/riak-inverted-index-demo)
+    * [riak-zabbix client](https://github.com/basho/riak-zabbix) (included in this repository)
+
 
 * local copies of CentOS 6 RPM dependencies
 
     * [Riak 2.0.6 RHEL6 x86-64](http://s3.amazonaws.com/downloads.basho.com/riak/2.0/2.0.6/rhel/6/riak-2.0.6-1.el6.x86_64.rpm)
     * [Riak 2.1.1 RHEL6 x86-64](http://s3.amazonaws.com/downloads.basho.com/riak/2.1/2.1.1/rhel/6/riak-2.1.1-1.el6.x86_64.rpm)
-
-* local copies of necessary git repositories
-
-    * [riak-inverted-index-demo](https://github.com/drewkerrigan/riak-inverted-index-demo)
 
 
 <br /><br /><br />

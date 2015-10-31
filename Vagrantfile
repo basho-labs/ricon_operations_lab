@@ -5,7 +5,7 @@
 VAGRANTFILE_API_VERSION = "2"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.box = "bento/centos-6.7"
+  config.vm.box = "basho/centos-6.7"
 
   config.vm.define "app" do |app|
     app.vm.hostname = "app.riak.local"
