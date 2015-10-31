@@ -4,6 +4,8 @@ data/work
 .vagrant
 *.rpm
 clusters/*
+data/app/riak-inverted-index-demo
+
 # OSX Items to ignore
 .DS_Store
 .AppleDouble
