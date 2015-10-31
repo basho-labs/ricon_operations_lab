@@ -22,7 +22,7 @@ If you don't currently have a connection, connect to node1 with the **<span styl
 Once that connection is made, open a Riak Attach session with the **<span style="font-family:monospace">riak attach</span>** command.
 
 From that Riak Attach session, run  
-**<span style="font-family:monospace">riak_kv_vnode:repair([Partition_ID]).</span>**
+**<span style="font-family:monospace">riak\_kv\_vnode:repair([Partition\_ID]).</span>**
 
 This will return
 

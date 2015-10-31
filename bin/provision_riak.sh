@@ -7,6 +7,7 @@ chmod 700 /root/.ssh
 cp /vagrant/data/work/id_rsa* /root/.ssh
 chmod 600 /root/.ssh/id_rsa*
 cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+cat /home/vagrant/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 chmod 600 /root/.ssh/authorized_keys 
 
 echo "* Checking for cached components"
