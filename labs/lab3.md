@@ -50,8 +50,8 @@ Why are we using crontab, and why so ugly? We're using crontab so the Zabbix age
 Next, we're going to make a couple quick modifications to agent's config file that will allow it to connect to the Zabbix server that we're going to set up next. The below Perl calls will tell Zabbix Agents to look for the server at 192.168.228.10, rather than at the local host.
 
 
-**<span style="font-family:monospace">perl -pi -e \'s/Server=127.0.0.1/Server=192.168.228.10/\' /etc/zabbix/zabbix_agentd.conf  </span>**  
-**<span style="font-family:monospace">perl -pi -e \'s/ServerActive=127.0.0.1/ServerActive=192.168.228.10/\' /etc/zabbix/zabbix_agentd.conf</span>**
+**<span style="font-family:monospace">perl -pi -e 's/Server=127.0.0.1/Server=192.168.228.10/' /etc/zabbix/zabbix_agentd.conf  </span>**  
+**<span style="font-family:monospace">perl -pi -e 's/ServerActive=127.0.0.1/ServerActive=192.168.228.10/' /etc/zabbix/zabbix_agentd.conf</span>**
 
 Finally, we kick off the Zabbix agents.
 
