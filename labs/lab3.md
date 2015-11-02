@@ -39,7 +39,9 @@ Paste or type in the following line:
 
 **<span style="font-family:monospace">\* \* \* \* \* /usr/sbin/riak-admin status > /var/lib/riak/riak-admin\_status.new && mv /var/lib/riak/riak-admin\_status.new /var/lib/riak/riak-admin\_status.tmp</span>**
 
-Exit Insert Mode by pressing **<span style="font-family:monospace">i</span>**
+Make sure that the cursor is at the beginning of the next line.  Press **<span style="font-family:monospace">Enter</span>** if need be.
+
+Exit Insert Mode by pressing **<span style="font-family:monospace">Esc</span>**
 
 Save your changes and exit vi by typing **<span style="font-family:monospace">:wq</span>** and then pressing **<span style="font-family:monospace">Enter</span>**.
 
@@ -63,9 +65,9 @@ Press **<span style="font-family:monospace">Ctrl+D</span>** once to exit the tmu
 
 Zabbix is able to use a number of backend databases to store historical data and drive the available graphs, but leaves it to the user to correctly setup said database. We'll be using the MySQL backend, because it's the one that's listed at the top of Zabbix's install instructions. I'm sorry, but I really have no further justification for this choice.
 
-We will need to run in a priviliged shell to perform the installation.  Switch to a root shell using the **<span style="font-family:monospace">sudo su -</span>** command.
+We will need to run in a privileged shell to perform the installation.  Switch to a root shell using the **<span style="font-family:monospace">sudo su -</span>** command.
 
-Before starting up the Zabbix server, we have to set up the MySQL database. Enter an interactive MqSQL session by fist starting the MySQL daemon with,
+Before starting up the Zabbix server, we have to set up the MySQL database. Enter an interactive MySQL session by fist starting the MySQL daemon with,
 
 **<span style="font-family:monospace">service mysqld start  </span>**
 
