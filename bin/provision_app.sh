@@ -38,10 +38,11 @@ chown vagrant /home/vagrant/.tmux-cssh
 echo "* Provisioning Sample Application"
 
 echo "    - Installing Sample Application"
-cp -r /vagrant/data/repos/riak-inverted-index-demo /home/vagrant/app/
+mkdir /home/vagrant/app
+cp -r /vagrant/data/repos/riak-inverted-index-demo /home/vagrant/app/riak-inverted-index-demo
 
 echo "    - Configuring Sample Application"
-cd riak-inverted-index-demo
+cd app/riak-inverted-index-demo
 mv hosts hosts.orig
 echo "192.168.228.11:8098
 192.168.228.12:8098
