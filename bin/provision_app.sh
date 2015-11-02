@@ -37,20 +37,8 @@ chown vagrant /home/vagrant/.tmux-cssh
 
 echo "* Provisioning Sample Application"
 
-echo "    - Checking for cached components"
-if [ ! -f "/vagrant/data/app/0.1.8.tar.gz" ] 
-  then
-    echo "   - Downloading Sample application from Github"
-    mkdir /vagrant/data/app
-    cd /vagrant/data/app
-    wget -q https://github.com/drewkerrigan/riak-inverted-index-demo/archive/0.1.8.tar.gz
-fi
-
 echo "    - Installing Sample Application"
-mkdir /home/vagrant/app
-cd /home/vagrant/app
-tar -zxf /vagrant/data/app/0.1.8.tar.gz
-mv riak-inverted-index-demo-0.1.8 riak-inverted-index-demo
+cp /vagrant/data/repos/riak-inverted-index-demo /home/vagrant/app/
 
 echo "    - Configuring Sample Application"
 cd riak-inverted-index-demo
