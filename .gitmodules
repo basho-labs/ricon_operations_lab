@@ -1,3 +1,0 @@
-[submodule "data/riak-zabbix"]
-	path = data/riak-zabbix
-	url = https://www.github.com/basho/riak-zabbix.git
