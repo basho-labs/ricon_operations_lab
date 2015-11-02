@@ -38,7 +38,7 @@ chown vagrant /home/vagrant/.tmux-cssh
 echo "* Provisioning Sample Application"
 
 echo "    - Installing Sample Application"
-cp /vagrant/data/repos/riak-inverted-index-demo /home/vagrant/app/
+cp -r /vagrant/data/repos/riak-inverted-index-demo /home/vagrant/app/
 
 echo "    - Configuring Sample Application"
 cd riak-inverted-index-demo
