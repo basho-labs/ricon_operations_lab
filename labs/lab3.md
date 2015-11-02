@@ -22,12 +22,12 @@ First let's setup the Zabbix Agent on all of the riak boxes. Enter a **<span sty
 
 **<span style="font-family:monospace">tmux-cssh -u root -cs riak</span>**
 
-Though we already have the Zabbix Agent installed on the basho/centos-6.7 box, we still need to teach those agents how to understand the output of **<span style="font-family:monospace">riak-admin status</span>**. Along with the packages, these boxes will have already contain a clone of Basho's [Riak Zabbix agent][riak-zabbix] repository into /vagrant/data/riak-zabbix.
+Though we already have the Zabbix Agent installed on the basho/centos-6.7 box, we still need to teach those agents how to understand the output of **<span style="font-family:monospace">riak-admin status</span>**. Along with the packages, these boxes will have already contain a clone of Basho's [Riak Zabbix agent][riak-zabbix] repository into /vagrant/data/repos/riak-zabbix.
 
 
 To include the Riak statistics in the set of metrics gathered by Zabbix, all we have to do is copy *userparameter\_riak.conf* from Riak Zabbix agent project into the Zabbix agent's *zabbix\_agentd.d* directory.
 
-**<span style="font-family:monospace">cp /vagrant/data/riak-zabbix/templates/userparameter\_riak.conf /etc/zabbix/zabbix\_agentd.d/</span>**
+**<span style="font-family:monospace">cp /vagrant/data/repos/riak-zabbix/templates/userparameter\_riak.conf /etc/zabbix/zabbix\_agentd.d/</span>**
 
 We still need to give the Zabbix agent some output to read, as it's unable to pull directly from the stats endpoints. For this, we're going to setup an automated job that will generate a riak-admin\_status.tmp file that the agent will extract data from.
 
@@ -150,7 +150,7 @@ We're now into the dashboard. The next step it to set up a Zabbix Host to track 
 
 > **Note**: This default set of tracked metrics can very easily be modified through a shell script included in the Riak Zabbix package. We'll be using the default set for now, but feel free to read up on [building your own set of stats][riak-zabbix_building] to track and graph as part of the Riak Zabbix package.
 
-Near the upper-right of the Configuration of Templates page, under the search bar, there should be an `Import` button. Press that to open the import dialog. Press the `Choose File` button under the `Import file` form to open the file selector. Navigate to the directory this lab was downloaded to, and select *data/riak-zabbix/templates/zabbix\_agent\_template\_riak.xml*. With that file chosen, press the `Import` button near the bottom of the page to load the Riak template.
+Near the upper-right of the Configuration of Templates page, under the search bar, there should be an `Import` button. Press that to open the import dialog. Press the `Choose File` button under the `Import file` form to open the file selector. Navigate to the directory this lab was downloaded to, and select *data/repos/riak-zabbix/templates/zabbix\_agent\_template\_riak.xml*. With that file chosen, press the `Import` button near the bottom of the page to load the Riak template.
 
 With the Riak template loaded, we're able to setup the Riak hosts and get tracking. To do this, we're going to have to enter the `Configuration->Hosts` sub-tab. We're going to want to create a new host with the `Create host` button that's, again, in the upper-right corner below the search bar. With this dialog open, we're going to fill in a few important fields,
 
