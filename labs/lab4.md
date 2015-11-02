@@ -22,7 +22,11 @@ Change directories into the Inverted Index demo folder, and verify that all Gems
 
 #### Load Some Data into the cluster
 
-**<span style="font-family:monospace">ruby load_data.rb data.csv</span>**
+**<span style="font-family:monospace">ruby load_data.rb data.csv &</span>**
+
+**<span style="font-family:monospace">watch tail -n1 load_progress.txt</span>**
+
+
 
 
 #### Start the Server
