@@ -26,7 +26,7 @@ fi
 if [ ! -f "/vagrant/data/rpmcache/riak-2.1.1-1.el6.x86_64.rpm" ] 
   then
     echo "   - Downloading Riak 2.1.1 Package into cache"
-    wget -q --output-document=/vagrant/data/rpmcache/riak-2.1.1-1.el6.x86_64.rpm http://s3.amazonaws.com/downloads.basho.com/riak/2.1/2.1.6/rhel/6/riak-2.1.1-1.el6.x86_64.rpm 
+    wget -q --output-document=/vagrant/data/rpmcache/riak-2.1.1-1.el6.x86_64.rpm http://s3.amazonaws.com/downloads.basho.com/riak/2.1/2.1.1/rhel/6/riak-2.1.1-1.el6.x86_64.rpm 
 fi
 
 echo "* Installing Riak Package"
