@@ -35,13 +35,13 @@ riak:-cs node1 -cs others
 cp ~/.tmux-cssh /home/vagrant
 chown vagrant /home/vagrant/.tmux-cssh
 
-echo "* Provisioning Sample Application"
-
-echo "    - Installing Sample Application"
+echo "* Provisioning Sample Applications"
 mkdir /home/vagrant/app
+
+echo "    - Installing Inverted Index Application"
 cp -r /vagrant/data/repos/riak-inverted-index-demo /home/vagrant/app/riak-inverted-index-demo
 
-echo "    - Configuring Sample Application"
+echo "    - Configuring Inverted Index Application"
 cd app/riak-inverted-index-demo
 mv hosts hosts.orig
 echo "192.168.228.11:8098
@@ -49,6 +49,9 @@ echo "192.168.228.11:8098
 192.168.228.13:8098
 192.168.228.14:8098
 192.168.228.15:8098" >> hosts
+
+echo "    - Installing Load Generator Application"
+cp -r /vagrant/data/repos/load_generator /home/vagrant/app/load_generator
 
 chown -R vagrant:vagrant /home/vagrant/app
 echo "*** APP Box Provisioning Complete"
