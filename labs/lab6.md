@@ -244,76 +244,46 @@ A hitchhiker's guide to riak attach
 
 The *riak attach* command will connect you to a REPL (read-evaluate-print-loop) running inside of the Erlang VM that is running the Riak application.
 
-Connect to *node1* using 
+Connect to *node1* using the **<span style="font-family:monospace">vagrant ssh node1</span>** command.  Type  **<span style="font-family:monospace">sudo su -</span>** and press  **<span style="font-family:monospace">Enter<span>** to start a root shell.
 
-
-
-
-Lab 5: Breaking Bad (destructive operations)
-----
-Imagine that all of a sudden we had a catastrophic failure of node4.  What in the world would we do?  Well, let's simulate that.
-
-We can destroy the contents of node4 using vagrant.  From the *Operations_Lab* folder, run the following command:
+Run the **<span style="font-family:monospace">riak attach</span>** command which will connect you to the Erlang VM.  Once commected you should see a prompt similar to the following:
 
 ```
-vagrant destroy -f node4
+Remote Shell: Use "Ctrl-C a" to quit. q() or init:stop() will terminate the riak node.
+Erlang R16B02_basho8 (erts-5.10.3) [source] [64-bit] [async-threads:10] [kernel-poll:false] [frame-pointer]
+
+Eshell V5.10.3  (abort with ^G)
+(riak@192.168.228.11)1> 
 ```
 
-You should see the following output:
+So first things first.  Let's learn how to get out of the shell.  Press **<span style="font-family:monospace">Ctrl-G<span>** and then **<span style="font-family:monospace">q<span>** then press Enter to exit *riak attach*.   Try that now.
+
+You should be back at the root user prompt on *node1*.  Restart a riak attach session by running **<span style="font-family:monospace">riak attach</span>**
+
+So what can we do in here.
+
+This is a full-featured Erlang environment, so you can run simple Erlang commands.  Type the following:
+
+```erlang
+100 * 200.
+```
+Note that the period (also referred to as a full-stop) is significant to the language.
+
+Press Enter and you should see the following:
 
 ```
-$ vagrant destroy -f node4
-==> node4: Forcing shutdown of VM...
-==> node4: Destroying VM and associated drives...
-==> node4: Running cleanup tasks for 'shell' provisioner...
+(riak@192.168.228.11)1> 100 * 200.
+20000
+(riak@192.168.228.11)2> 
 ```
 
-We can take a moment here and verify that our sample application is still responsive.  Pretty awesome, right?
+A typical use of riak attach is to run snippets provided by Basho support.  One such snippet will collect the partitions owned by a specific node.  We will use this snippet in a later lab:
 
-So let's rebuild node4 by reprovisioning it with vagrant.  Run this:
-
-```
-vagrant up node4
-```
-
-You should get a ton of information about the provisioning process, but ultimately, you should get a riak node ready to go with riak started.
-
-**OH NO!!!  The new node is still in the load balancer.  People are doing PUTs but not seeing the results.**  
-
-Take a second... Calm down and relax.  Ordinarily, you would want to ensure that the newly provisioned node could not take traffic by removing it from the load balancer.  However, sometimes that just gets missed.  While this isn't seamless for your users, panic not... their data is safe.  When you rejoin the node to the cluster, it will see that it contains data that it does not own and will pass to the proper owner in the cluster.
-
-Now is a good time to talk about missing replicas and what that means in your cluster.
-As you know, when you do a PUT into Riak, you are actually making *n-val* many copies of the object.
-
-Riak's primary automatic repair mechanism is called read-repair.  When a value is read, the values are checked for agreement.  If they disagree, they are made to agree by creating a new value, updating an existing value, or creating a sibling.  We'll talk more about repairs in the next lab.
-
-A certain class of queries in Riak use a concept known as a covering set of partitions. These include:
-
-* key listing
-* bucket listing
-* secondary index queries
-
-These queries will return inconsistent values while there are missing replicas, as only one partition is consulted for a certain range of values.  The calculated coverage plan might include a partition with missing replicas or it might not. Coverage plans are designed to include an element of jitter so that they do not overwhelm certain nodes in the cluster all of the time
-
-Okay, back to our fire currently in progress:
-
-
-Let's rejoin the node to the cluster with the following commands.  From the *Operations_Lab* folder:
-
-```
-vagrant ssh node4
-```
-You will now be connected as the vagrant user on node4.  Enter the following commands:
-
-```
-sudo su -
-riak-admin cluster join riak@192.168.228.11
-riak-admin cluster plan
-riak-admin cluster commit
+```erlang
+Ring = riak_core_ring_manager:get_my_ring().
+Partitions = [P || {P, 'riak@192.168.211.11'} <- riak_core_ring:all_owners(Ring)].
+[riak_kv_vnode:repair(P) || P <- Partitions].
 ```
 
-As when we clustered the nodes together in the beginning, you can monitor for transfers to complete.
-
-Things are still not quite perfect.  Secondary index queries are still returning inconsistent results...
-
+There are also interesting abilities to perform commands using RPC since the nodes are all clustered.  We are going to leave further discussion about the possibilities of riak-attach for the Q&A
 
