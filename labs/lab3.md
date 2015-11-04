@@ -1,73 +1,69 @@
 Lab 3: Monitoring
 ----
+**Objetive:** To set up a [Zabbix][zabbix] monitoring solution to provide our nodes.
 
-Setting up a good monitoring solution is an enormous piece of operating a good Riak installation. This probably isn't the first time you've heard something like this, and I will be shocked if it's the last. Here. I'll make sure that won't be the last you've heard of it; Setting up a good monitoring solution is an enormous piece of operating a good Riak installation.
+Setting up a good monitoring solution is an enormous piece of operating a good Riak installation. This probably isn't the first time you've heard something like this, and I will be surprised if it's the last. Here. I'll make sure that won't be the last you've heard it; setting up a good monitoring solution is an enormous piece of operating a good Riak installation.
 
-In this lab, we'll be using the [Zabbix Monitoring tool][zabbix] to set up a Zabbix Server on our _app_ node and Zabbix Agents on our Riak nodes, and see exactly how much effort it takes to get basic monitoring up and running.
-
-We've chosen Zabbix for this lab, primarily because it will run locally on our _app_ nodes. It's a **very** good choice to look closely at your needs and options before choosing a monitoring solution. Hosted platforms such as [Datadog][datadog] and [New Relic][new_relic] will often serve production-level requirements much better than a local solution.
+We've chosen Zabbix as our monitoring solution for this lab, primarily because it will run locally on our app nodes. It is **very** important to  look closely at your needs and options before choosing a monitoring solution. Hosted platforms such as [Datadog][datadog] and [New Relic][new_relic] will often serve production-level requirements much better than a locally hosted solution.
 
 <br /><br />
 
-We're going to spend a lot of time on the app node, **<span style="font-family:monospace">tmux</span>**ing into other nodes, so make sure you're ssh'd into the _app_ node.
+We're going to spend a lot of time on the app node, **<span style="font-family:monospace">tmux</span>**ing into other nodes, so make sure you're ssh'd into the app node.
 
 **<span style="font-family:monospace">vagrant ssh app</span>**  
 
 
-
 #### Setting up the Zabbix Agents on Our Cluster
-
 
 First let's setup the Zabbix Agent on all of the riak boxes. Enter a **<span style="font-family:monospace">tmux-cssh</span>** session with all of the Riak nodes in this cluster using:
 
 **<span style="font-family:monospace">tmux-cssh -u root -cs riak</span>**
 
-Though we already have the Zabbix Agent installed on the basho/centos-6.7 box, we still need to teach those agents how to understand the output of **<span style="font-family:monospace">riak-admin status</span>**. Along with the packages, these boxes will have already contain a clone of Basho's [Riak Zabbix agent][riak-zabbix] repository into /vagrant/data/repos/riak-zabbix.
+Though we already have the Zabbix Agent installed on the basho/centos-6.7 box, we still need to teach those agents how to understand the output of **<span style="font-family:monospace">riak-admin status</span>**. The ricon\_operations\_lab repository includes a clone of Basho's [Riak Zabbix agent][riak-zabbix] repository in /vagrant/data/repos/riak-zabbix. This repository includes the template files you'll need to allow the Zabbix agent to process Riak's statistics.
 
+> **Note**: The included clone of riak-zabbix points to the `dpb/additional_metrics` branch which, as the name suggest, provides a few more metrics and graphs than the `master` branch.
 
-To include the Riak statistics in the set of metrics gathered by Zabbix, all we have to do is copy *userparameter\_riak.conf* from Riak Zabbix agent project into the Zabbix agent's *zabbix\_agentd.d* directory.
+To include the Riak statistics in the set of metrics passed from the Zabbix agent to the server, all we have to do is copy *userparameter\_riak.conf* from the Riak Zabbix project into the local Zabbix agent's *zabbix\_agentd.d* directory.
 
 **<span style="font-family:monospace">cp /vagrant/data/repos/riak-zabbix/templates/userparameter\_riak.conf /etc/zabbix/zabbix\_agentd.d/</span>**
 
-We still need to give the Zabbix agent some output to read, as it's unable to pull directly from the stats endpoints. For this, we're going to setup an automated job that will generate a riak-admin\_status.tmp file that the agent will extract data from.
+Now we need to make sure we're giving the Zabbix agent actual output to read. The agent is unable to pull directly from the /stats endpoints or from **<span style="font-family:monospace">riak-admin status</span>**. Instead, we're going to setup an automated job that will periodically (once per minute) generate a riak-admin\_status.tmp file that the Zabbix agent will extract data from.
 
-Open up the crontab in your default editor with **<span style="font-family:monospace">crontab -u riak -e</span>** and add in the below line.  
+Open up the crontab in your default editor,
 
-To enter Insert Mode, press **<span style="font-family:monospace">i</span>**
+**<span style="font-family:monospace">crontab -u riak -e</span>**
 
-Paste or type in the following line:
+This will open the riak user's crontab file with your default editor; probably vi. If you are unfamiliar with vi, enter Insert Mode by pressing **<span style="font-family:monospace">i</span>**, and paste or type in the following line:
 
 **<span style="font-family:monospace">\* \* \* \* \* /usr/sbin/riak-admin status > /var/lib/riak/riak-admin\_status.new && mv /var/lib/riak/riak-admin\_status.new /var/lib/riak/riak-admin\_status.tmp</span>**
 
-Make sure that the cursor is at the beginning of the next line.  Press **<span style="font-family:monospace">Enter</span>** if need be.
+Make sure that the cursor is at the beginning of the next (empty) line.  Press **<span style="font-family:monospace">Enter</span>** if need be.
 
-Exit Insert Mode by pressing **<span style="font-family:monospace">Esc</span>**
+Exit Insert Mode by pressing **<s.pan style="font-family:monospace">Esc</span>**
 
 Save your changes and exit vi by typing **<span style="font-family:monospace">:wq</span>** and then pressing **<span style="font-family:monospace">Enter</span>**.
 
-Why are we using crontab, and why so ugly? We're using crontab so the Zabbix agent doesn't have to run under escalated privileges. The hacky **<span style="font-family:monospace">&gt;</span>** then **<span style="font-family:monospace">mv</span>** is to prevent the agent from attempting to read the tmp file while riak-admin is running, causing erroneous NULL results
+> **Note:** Why are we using crontab, and why so ugly? We're using crontab so the Zabbix agent doesn't have to run under escalated privileges. The hacky **<span style="font-family:monospace">&gt;</span>** then **<span style="font-family:monospace">mv</span>** is to prevent the agent from attempting to read the tmp file while riak-admin is running, causing erroneous NULL results
 
-<br />
+Next, we're going to make a couple quick modifications to agent's config file that will allow it to connect to the Zabbix server that we're going to set up on the app node. The below Perl calls will tell Zabbix Agents to look for the server at 192.168.228.10, rather than at the local host.
 
-Next, we're going to make a couple quick modifications to agent's config file that will allow it to connect to the Zabbix server that we're going to set up next. The below Perl calls will tell Zabbix Agents to look for the server at 192.168.228.10, rather than at the local host.
+**<span style="font-family:monospace">perl -pi -e 's/Server=127.0.0.1/Server=192.168.228.10/' /etc/zabbix/zabbix\_agentd.conf  </span>**  
+**<span style="font-family:monospace">perl -pi -e 's/ServerActive=127.0.0.1/ServerActive=192.168.228.10/' /etc/zabbix/zabbix\_agentd.conf</span>**
 
-
-**<span style="font-family:monospace">perl -pi -e 's/Server=127.0.0.1/Server=192.168.228.10/' /etc/zabbix/zabbix_agentd.conf  </span>**  
-**<span style="font-family:monospace">perl -pi -e 's/ServerActive=127.0.0.1/ServerActive=192.168.228.10/' /etc/zabbix/zabbix_agentd.conf</span>**
-
-Finally, we kick off the Zabbix agents.
+Finally, we start the Zabbix agents.
 
 **<span style="font-family:monospace">service zabbix-agent start</span>**
 
 Press **<span style="font-family:monospace">Ctrl+D</span>** once to exit the tmux session.
 
+
 #### Setting up the Zabbix Server on Our App
 
-Zabbix is able to use a number of backend databases to store historical data and drive the available graphs, but leaves it to the user to correctly setup said database. We'll be using the MySQL backend, because it's the one that's listed at the top of Zabbix's install instructions. I'm sorry, but I really have no further justification for this choice.
+Zabbix servers are able to use a number of backend databases to store historical data and drive the available graphs, but it's left to the user to correctly setup said database. We'll be using the MySQL backend, because it's the one that's listed at the top of Zabbix's install instructions. I'm sorry, but I really have no further justification for this choice.
 
-We will need to run in a privileged shell to perform the installation.  Switch to a root shell using the **<span style="font-family:monospace">sudo su -</span>** command.
+We will need to run in a privileged shell to perform the installation. Switch to a root shell using the **<span style="font-family:monospace">su -</span>** command.
 
-Before starting up the Zabbix server, we have to set up the MySQL database. Enter an interactive MySQL session by fist starting the MySQL daemon with,
+Before starting the Zabbix server, we have to set up the MySQL database. Enter an interactive MySQL session by fist starting the MySQL daemon with,
 
 **<span style="font-family:monospace">service mysqld start  </span>**
 
@@ -77,21 +73,21 @@ And then entering,
 
 In that session, enter the four below commands,
 
-**<span style="font-family:monospace">create database zabbix character set utf8 collate utf8_bin;  </span>**  
-**<span style="font-family:monospace">grant all privileges on zabbix.* to zabbix@localhost identified by 'zabbix';  </span>**  
+**<span style="font-family:monospace">create database zabbix character set utf8 collate utf8\_bin;</span>**  
+**<span style="font-family:monospace">grant all privileges on zabbix.* to zabbix@localhost identified by 'zabbix';</span>**  
 **<span style="font-family:monospace">flush privileges;</span>**  
 **<span style="font-family:monospace">exit;</span>**
 
-With the database set up, we load it with the default set of schemas, images, and data that will drive the Zabbix server.
+With the database set up, we can now load it with the default set of Zabbix schemas, images, and data that will drive the Zabbix server.
 
-**<span style="font-family:monospace">mysql zabbix < /usr/share/doc/zabbix-server-mysql-2.4.6/create/schema.sql</span>**         
+**<span style="font-family:monospace">mysql zabbix < /usr/share/doc/zabbix-server-mysql-2.4.6/create/schema.sql</span>**  
 **<span style="font-family:monospace">mysql zabbix < /usr/share/doc/zabbix-server-mysql-2.4.6/create/images.sql</span>**  
 **<span style="font-family:monospace">mysql zabbix < /usr/share/doc/zabbix-server-mysql-2.4.6/create/data.sql</span>**
 
-With a backing database setup, we won't need to touch MySQL for the rest of this demo. We do still need to tell Zabbix that data has been set up, though. To do so, we just append a two configuration options to the server's configuration file,
+With a backing database setup, we won't need to touch MySQL for the rest of this demo. We do need to tell Zabbix that database has been set up though. To do so, we just append a two configuration options to the server's configuration file,
 
-**<span style="font-family:monospace">echo \"DBHost=localhost\" >> /etc/zabbix/zabbix_server.conf</span>**  
-**<span style="font-family:monospace">echo \"DBPassword=zabbix\" >> /etc/zabbix/zabbix_server.conf</span>**
+**<span style="font-family:monospace">echo "DBHost=localhost" >> /etc/zabbix/zabbix\_server.conf</span>**  
+**<span style="font-family:monospace">echo "DBPassword=zabbix" >> /etc/zabbix/zabbix\_server.conf</span>**
 
 Now we're ready to start the Zabbix server.
 
@@ -111,12 +107,15 @@ Now we get to start the HTTP daemon.
 
 With all this done, we should be able to access the web frontend on our host machines through http://192.168.228.10/zabbix
 
+With all the salient services running, we can exit the **<span style="font-family:monospace">su -</span>** session by pressing **<span style="font-family:monospace">ctrl+d</span>** once.
+
+
 
 #### Setting Up the Web Front End
 
-Unfortunately, this portion of the setup document is going to be somewhat looser, because the frontend in use is entirely a GUI. By nature, the descriptions provided in this document will be less precise than the above commands.
+Unfortunately, this portion of the setup document is going to be somewhat more loose because the frontend in use is entirely a GUI. By nature, the descriptions provided in this document will be less precise than the above commands.
 
-When first loading up 192.168.228.10/zabbix, you should be greeted by a Welcome page with a series of setup pages, and a `Next»` button in the bottom right of the page's content. We're going to go ahead and page through using that button, only stopping where necessary.
+When first loading up 192.168.228.10/zabbix, you should be greeted by a Welcome page with a series of setup pages, and a `Next»` button in the bottom right of the splash screen. We're going to go ahead and page through using that button, only stopping where necessary.
 
 1. Welcome  
     Nothing needs to be done.
@@ -131,7 +130,7 @@ When first loading up 192.168.228.10/zabbix, you should be greeted by a Welcome 
     * **Datbase name**  -- should remain **<span style="font-family:monospace">zabbix</span>**
     * **User**          -- needs to be changed to **<span style="font-family:monospace">zabbix</span>**
     * **Password**      -- needs to be changed to **<span style="font-family:monospace">zabbix</span>**
-    Once all configurations have been set, press the _Test connection_ button.
+    Once all configurations have been set, press the `Test connection` button, followed by `Next»`.
 4. Zabbix server details  
     Nothing needs to be done.
 5. Pre-Installation summary  
@@ -150,24 +149,30 @@ We're now into the dashboard. The next step it to set up a Zabbix Host to track 
 
 <span style="display:none">---</span>
 
-> **Note**: This default set of tracked metrics can very easily be modified through a shell script included in the Riak Zabbix package. We'll be using the default set for now, but feel free to read up on [building your own set of stats][riak-zabbix_building] to track and graph as part of the Riak Zabbix package.
+> **Note**: This set of metrics the zabbix\_agent\_template\_riak.xml template traks can very easily be modified through a shell script included in the Riak Zabbix package. We'll be using the default set for now, but feel free to read up on [building your own set of stats][riak-zabbix_building] to track and graph as part of the Riak Zabbix package.
 
-Near the upper-right of the Configuration of Templates page, under the search bar, there should be an `Import` button. Press that to open the import dialog. Press the `Choose File` button under the `Import file` form to open the file selector. Navigate to the directory this lab was downloaded to, and select *data/repos/riak-zabbix/templates/zabbix\_agent\_template\_riak.xml*. With that file chosen, press the `Import` button near the bottom of the page to load the Riak template.
+Near the upper-right of the Configuration of Templates page, under the search bar, there should be an `Import` button. Press that to open the import dialog. Press the `Choose File` button under the `Import file` form to open the file selector. Navigate to the directory this lab was downloaded to, and select **<span style="font-family:monospace">data/repos/riak-zabbix/templates/zabbix\_agent\_template\_riak.xml</span>**. With that file chosen, press the `Import` button near the bottom of the page to load the Riak template.
 
 With the Riak template loaded, we're able to setup the Riak hosts and get tracking. To do this, we're going to have to enter the `Configuration->Hosts` sub-tab. We're going to want to create a new host with the `Create host` button that's, again, in the upper-right corner below the search bar. With this dialog open, we're going to fill in a few important fields,
 
-* **Host name** -- **<span style="font-family:monospace">Riak Zabbix</span>**
-* **Groups** --  Move **<span style="font-family:monospace">Zabbix servers</span>** from the `Other groups` form to the `In groups` form by selecting it, and pressing the `«` button
-* **IP address** -- We're going to need five of these; one for every running Riak node. Add additional entries by pressing the underlined `_Add_` text anchor. Modify the IP address accordingly, and leave the port at the default 10050. The full list of IP addresses will be,
-    * **<span style="font-family:monospace">192.168.228.11</span>**
-    * **<span style="font-family:monospace">192.168.228.12</span>**
-    * **<span style="font-family:monospace">192.168.228.13</span>**
-    * **<span style="font-family:monospace">192.168.228.14</span>**
-    * **<span style="font-family:monospace">192.168.228.15</span>**
+* **Host name** -- **<span style="font-family:monospace">Node 1</span>**
+* **New Group** -- **<span style="font-family:monospace">Riak Nodes</span>**
+* **IP address** -- **<span style="font-family:monospace">192.168.228.11</span>**
 
-Before we add this Host, we're going to want to have it load the Riak template we imported previously. To do this, select the `Templates` tab -- which will be immediately above the `Host name` form. Once there, begin typing **<span style="font-family:monospace">Riak</span>** into the `Link new templates` form, and search results should begin appearing. When Riak is the only option available, press enter, and then click on the `_Add_` anchor text to lock in that selection. With that done, press the `Add` button that sits below the rest of the content to add our new Riak Zabbix host to the list of statistics that will be monitored.
+Before we add this Host, we're going to want to have it load the Riak template we imported previously. To do this, select the `Templates` tab, which will be immediately above the `Host name` form. Once there, begin typing **<span style="font-family:monospace">Riak</span>** into the `Link new templates` form, and search results should begin appearing. When Riak is the only option available, press enter, and then click on the underlined `_Add_` anchor text to lock in that selection. With that done, press the `Add` button that sits below the rest of the content to create our new Riak Zabbix Host.
 
-**Congratulations!** Zabbix is now up and running, acting as a baseline monitor for our Riak cluster. It's time to explore! Check out the `Monitoring->Graphs` section, set `Host` to **<span style="font-family:monospace">Riak Zabbix</span>**, and check out what different `Graphs` are readily available. Spin up the application we put together in the previous labs, and see how the graphs react to the incoming data. Go nuts!
+With that host created, we need to create 4 more; one for each other node. Because the Group and template will be remaining the same, it will be simplest to clone the Node 1 host, and modify the name and IP per new host.
+
+Click on the newly created Node 1 host to bring up its information. Near the bottom of the pages' contents there should be a `Clone` button. Press that button, and we should be taken to a `Create New Host` page that will be seeded with the old Host's information. Update the name and IPadress according to the table below, and press `Add` to create the cloned host. Repeat this process until you have all 5 nodes added as hosts.
+
+* **<span style="font-family:monospace">Node 2 -- 192.168.228.12</span>**
+* **<span style="font-family:monospace">Node 3 -- 192.168.228.13</span>**
+* **<span style="font-family:monospace">Node 4 -- 192.168.228.14</span>**
+* **<span style="font-family:monospace">Node 5 -- 192.168.228.15</span>**
+
+**Congratulations!** Zabbix is now up and running, and acting as a baseline monitor for our Riak cluster. It's time to explore. Check out the `Monitoring->Graphs` section, set `Group` to **<span style="font-family:monospace">Riak Nodes</span>**, `Host` to any one of the running nodes, and check out what different `Graphs` are available.
+
+TODO: create and provide instructions on adding a custom screen.
 
 
 [zabbix]: http://www.zabbix.com/
