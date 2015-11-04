@@ -134,3 +134,5 @@ Active Transfers:
 Once the output of *riak-admin transfers* reports that there are "No transfers active", the join operation is complete.  You now have a five node riak cluster.
 
 Press **<span style="font-family:monospace">Ctrl-D</span>** twice to return to the *Operations_Lab* folder on your computer.
+
+
