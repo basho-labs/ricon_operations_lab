@@ -1,7 +1,7 @@
 #! /bin/bash
 source /vagrant/bin/provision_helper.sh
-
-echo "Generating Root Keypair"
+echo "* Configuring SSH"
+echo "    - Generating Root Keypair"
 ssh-keygen -t rsa -C "root@riak.local" -f /root/.ssh/id_rsa -N ""
 chmod 600 /root/.ssh/id_rsa* 
 
@@ -14,14 +14,17 @@ cp /root/.ssh/id_rsa* /home/vagrant/.ssh
 chown vagrant /home/vagrant/.ssh/id_rsa*
 chmod 600 /home/vagrant/.ssh/id_rsa*
 
+echo "    - Disabling GSSAPIAuthentication"
+cp /etc/ssh/ssh_config /etc/ssh/ssh_config.orig
+sed 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/g' /etc/ssh/ssh_config.orig > /etc/ssh/ssh_config
 
-echo "Installing tmux..."
+echo "    - Installing tmux..."
 cp /vagrant/data/applications/tmux /usr/local/bin/tmux
 
-echo "Installing tmux-cssh..."
+echo "    - Installing tmux-cssh..."
 cp /vagrant/data/applications/tmux-cssh /usr/local/bin/tmux-cssh
 
-echo "Creating ~/.tmux-cssh..."
+echo "    - Creating ~/.tmux-cssh..."
 echo "
 others:-u root -sc 192.168.228.12 -sc 192.168.228.13 -sc 192.168.228.14 -sc 192.168.228.15
 node1:-u root -sc 192.168.228.11

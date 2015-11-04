@@ -58,6 +58,10 @@ echo "buckets.default.allow_mult = true" >> /etc/riak/riak.conf
 echo "listener.http.internal = 0.0.0.0:8098" >> /etc/riak/riak.conf
 echo "listener.protobuf.internal = 0.0.0.0:8087" >> /etc/riak/riak.conf
 
+echo "* Disabling GSSAPIAuthentication"
+cp /etc/ssh/ssh_config /etc/ssh/ssh_config.orig
+sed 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/g' /etc/ssh/ssh_config.orig > /etc/ssh/ssh_config
+
 
 insert_attribute riak riak@$IP_ADDRESS
 insert_service riak riak@$IP_ADDRESS
