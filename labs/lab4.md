@@ -41,9 +41,15 @@ With the data loaded, we can now start the HTTP server that will give an interac
 
 With that process running, you should be able to access the Inverted index application by navigating to localhost:8080 in a browser on your host machine.
 
-From there, we can query the server with.... things? By doing... Stuff?
+From there, we can query the server either using the Secondary Indexes written directly to the Zombie objects, or using Term-Based indexing made available through the `zip_inv` bucket. Go ahead and punch in a few zip codes and see what comes up.
 
-TODO: Give some real examples here plz. Drew. Drew, you should do that, Drew.
+To get a closer look at exactly what's stored in Riak, try running the below commands from your host machine.
+
+**<span style="font-family:monospace">curl localhost:10018/buckets/zombies/keys/144-20-0815 -v -i</span>**
+
+**<span style="font-family:monospace">curl localhost:10018/buckets/zip_inv/keys\?keys=true</span>**
+
+**<span style="font-family:monospace">curl localhost:10018/buckets/zip_inv/keys/30083 -v -i</span>**
 
 
 ### load\_generator.rb
@@ -58,8 +64,7 @@ Usage: load_generator [options]
     -b, --bucket_name BUCKET_NAME    ["load"]  Name of the bucket to target
     -s, --object_size OBJ_SIZE       [2 KiB]   Size of each PUT Object
     -n, --object_count COUNT         [500]     The count of objects to PUT before closing the current PB client, opening a new one, and repeating GETs
-    -p, --puts_per_second COUNT      [20]      The *maximum* number of PUTs to perform per Second.
-        --fetch                      [false]   Instead of performing PUTs, GET all specified object, and report errors.
+    -p, --puts_per_second COUNT      [200]     The *maximum* number of PUTs to perform per Second.
         --create_siblings            [false]   No coordinating GET will be performed, and siblings will be generated
 ```
 

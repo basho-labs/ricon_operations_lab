@@ -8,9 +8,8 @@ options = {
   :bucket_name      => "load",
   :object_size      => (2 * 1024**1),
   :object_count     => 500,
-  :puts_per_second  => 20,
+  :puts_per_second  => 200,
   :create_siblings  => false,
-  :should_fetch     => false,
 }
 
 OptionParser.new do |opt|
@@ -31,12 +30,8 @@ OptionParser.new do |opt|
       options[:object_count] = o }
 
   opt.on('-p', '--puts_per_second COUNT', Integer,
-    '[20]      The *maximum* number of PUTs to perform per Second.') { |o|
+    '[200]     The *maximum* number of PUTs to perform per Second.') { |o|
       options[:puts_per_second] = o }
-
-  opt.on(      '--fetch',
-    '[false]   Instead of performing PUTs, GET all specified object, and report errors.') { |o|
-      options[:should_fetch] = true }
 
   opt.on(      '--create_siblings',
     '[false]   No coordinating GET will be performed, and siblings will be generated') { |o|
