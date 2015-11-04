@@ -61,7 +61,9 @@ Press **<span style="font-family:monospace">Ctrl+D</span>** once to exit the tmu
 
 Zabbix servers are able to use a number of backend databases to store historical data and drive the available graphs, but it's left to the user to correctly setup said database. We'll be using the MySQL backend, because it's the one that's listed at the top of Zabbix's install instructions. I'm sorry, but I really have no further justification for this choice.
 
-We will need to run in a privileged shell to perform the installation. Switch to a root shell using the **<span style="font-family:monospace">su -</span>** command.
+We will need to run in a privileged shell to perform the installation. Switch to a root shell using with
+
+**<span style="font-family:monospace">su -</span>**
 
 Before starting the Zabbix server, we have to set up the MySQL database. Enter an interactive MySQL session by fist starting the MySQL daemon with,
 
@@ -172,7 +174,7 @@ Click on the newly created Node 1 host to bring up its information. Near the bot
 
 **Congratulations!** Zabbix is now up and running, and acting as a baseline monitor for our Riak cluster. It's time to explore. Check out the `Monitoring->Graphs` section, set `Group` to **<span style="font-family:monospace">Riak Nodes</span>**, `Host` to any one of the running nodes, and check out what different `Graphs` are available.
 
-TODO: create and provide instructions on adding a custom screen.
+Once you've gotten to know what's available, you can start putting together _Screens_ that will allow you to display multiple pieces of data on one, well, screen. Because the user-interface that Zabbix has exposed for configuring these screens is tremendously slow, we've gone ahead and included a template for a useful -- if somewhat verbose -- screen. Navigate to `Configuration->Screens`, and `Import` the **<span style="font-family:monospace">data/repos/riak-zabbix/templates/riak\_large\_screen\_template.xml</span>** that's been included in the ricon\_operations\_lab repository, and take a look at what's been made available there.
 
 
 [zabbix]: http://www.zabbix.com/
