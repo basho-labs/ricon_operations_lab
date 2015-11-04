@@ -1,8 +1,8 @@
 Lab 2: Configuring the cluster for the application
 ---
-**Objective:** Once this process is complete, your five node Riak cluster will be running Multi Backend with LevelDB as the default backend.
+**Objective:** Configure our five node Riak cluster to run the Multi Backend with LevelDB as the default backend.
 
-Since our sample application uses Secondary Indexes, we need to change the backend from the default of Bitcask.  
+Since our sample application uses Secondary Indexes, we need to change the backend from the default of Bitcask.
 
 You have two options to make the configuration changes. You can stop all of the nodes and perform all of the changes at once, or you can perform rolling restarts on the node if you need to make changes with minimal to no impact to your customer.  We will perform a rolling configuration change.  First, we will modify all of the configuration files and then we will perform rolling restarts of the riak process on the cluster nodes.
 
@@ -13,17 +13,17 @@ From the *Operations_Lab* folder:
 
 #### Edit the configuration
 
-The *riak.conf* file is a last-processed-wins configuration file format with each directive on its own line. This simplifies dynamic creation of the files because there is no complex punctuation rules to be enforced. We can just add overriding directives to the end of the file.   
+The *riak.conf* file is a last-processed-wins configuration file format with each directive on its own line. This simplifies dynamic creation of the files because there is no complex punctuation rules to be enforced. We can just add overriding directives to the end of the file.
 
 > **<span style="color:red">Warning</span>**: This process will cause any data stored in the Bitcask backed to appear to become inaccessible.  If you need to preserve the data in the backend that you are migrating away from, you will need to use rolling *replace* operations to stimulate transfers which will preserve the backend data.  More information about this process can be found in the Riak KV documentation.
 
-Edit the configuration file by typing **<span style="font-family:monospace">vi /etc/riak/riak.conf</span>**. 
+Edit the configuration file by typing **<span style="font-family:monospace">vi /etc/riak/riak.conf</span>**.
 
 * Press **<span style="font-family:monospace">Shift-G</span>** to jump to the end of the file.
 
 * Press **<span style="font-family:monospace">&dollar;</span>** to jump to the end of the line.
 
-* Press **<span style="font-family:monospace">i</span>** enter Insert mode. 
+* Press **<span style="font-family:monospace">i</span>** enter Insert mode.
 
 * Press the Right Arrow key to move over one space.
 
@@ -31,20 +31,18 @@ Edit the configuration file by typing **<span style="font-family:monospace">vi /
 
 * Add the following lines to the file
 
-    
-    >storage\_backend = multi  
-    multi\_backend.default = my\_leveldb  
-    multi\_backend.my\_leveldb.storage\_backend = leveldb  
-    multi\_backend.my\_leveldb.leveldb.data\_root = $(platform\_data\_dir)/leveldb  
-    multi\_backend.my\_leveldb.leveldb.maximum\_memory.percent = 50  
-    multi\_backend.my\_bitcask.storage\_backend = bitcask  
-    multi\_backend.my\_bitcask.bitcask.data\_root = $(platform\_data\_dir)/bitcask
-    
+**<span style="font-family:monospace">storage\_backend = multi</span>**  
+**<span style="font-family:monospace">multi\_backend.default = my\_leveldb</span>**  
+**<span style="font-family:monospace">multi\_backend.my\_leveldb.storage\_backend = leveldb</span>**  
+**<span style="font-family:monospace">multi\_backend.my\_leveldb.leveldb.data\_root = $(platform\_data\_dir)/leveldb</span>**  
+**<span style="font-family:monospace">multi\_backend.my\_leveldb.leveldb.maximum\_memory.percent = 50</span>**  
+**<span style="font-family:monospace">multi\_backend.my\_bitcask.storage\_backend = bitcask</span>**  
+**<span style="font-family:monospace">multi\_backend.my\_bitcask.bitcask.data\_root = $(platform\_data\_dir)/bitcask</span>**
 
-* Press Escape to exit Insert mode, 
+* Press Escape to exit Insert mode,
 * Type **<span style="font-family:monospace">:wq</span>** and press Enter to save our changes to the file and to exit vi.
 
-* Press **<span style="font-family:monospace">Ctrl-D</span>** once to exit our tmux session and then **<span style="font-family:monospace">Ctrl-D</span>** once more to exit the ssh session to *app* and return to the *Operations_Lab* folder.  
+* Press **<span style="font-family:monospace">Ctrl-D</span>** once to exit our tmux session and then **<span style="font-family:monospace">Ctrl-D</span>** once more to exit the ssh session to *app* and return to the *Operations_Lab* folder.
 
 #### Rolling Restart
 
@@ -67,5 +65,3 @@ Perform a rolling restart of the cluster nodes by connecting to each node in tur
 
 
 We now have our five node cluster using LevelDB as the default backend and a Bitcask backend available for use as well.
-
- 
