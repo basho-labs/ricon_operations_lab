@@ -3,6 +3,7 @@ Generating the Basho/CentOS-6.7 Box
 
 Start with the [Bento/CentOS-6.7](https://atlas.hashicorp.com/bento/boxes/centos-6.7) Box.
 
+
 #### Generally useful packages
 
 ```

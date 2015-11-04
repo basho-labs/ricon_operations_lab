@@ -19,7 +19,7 @@ To get the day started, you will need to have downloaded the Vagrantbox used for
     This box is based off of v2.2.2 of the [bento/centos-6.7](https://atlas.hashicorp.com/bento/boxes/centos-6.7) box.
 
     * fetch it with `wget https://www.dropbox.com/s/rdsx5ix5bmbqql5/basho-VAGRANTSLASH-centos-6.7.box?dl=0`
-    * Add it to your copy of vagrant with **<span style="font-family:monospace">vagrant box add basho-VAGRANTSLASH-centos-6.7.box --name basho-VAGRANTSLASH-centos-6.7 --checksum-type md5 --checksum 5a11ff30c0f4da2c564091f739420485</span>**
+    * Add it to your copy of vagrant with **<span style="font-family:monospace">vagrant box add basho-VAGRANTSLASH-centos-6.7.box --name basho-VAGRANTSLASH-centos-6.7 --checksum-type md5 --checksum 7845698c38191c73c0f12b755fc9ef9f</span>**
 
 
 * local copies of necessary git repositories
