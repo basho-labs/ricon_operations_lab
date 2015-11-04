@@ -1,4 +1,4 @@
-Lab 8: Fixing Bad (riak_kv_vnode:repair)
+Lab 8: Fixing Bad (riak\_kv\_vnode:repair)
 ---
 
 As part of the previous **Breaking Bad** lab, we caused some damage to our clusters' replicas. This, unfortunately, does sometimes happen to production clusters (hopefully not intentionally). As you have learned, Riak was designed to withstand -- or at the very least reduce the severity of -- many types of system failures, and understanding how Riak is capable of recovering from these situations can be a valuable piece of knowledge.
@@ -23,13 +23,15 @@ Once that connection is made, open a Riak Attach session with the **<span style=
 
 From that Riak Attach session, we'll first find out which partitions need to be repaired. Run the below list comprehensions to generate the full list,
 
-**<span style="font-family:monospace">{ok, Ring} = riak_core_ring_manager:get_my_ring().</span>**  
-**<span style="font-family:monospace">Node3Partitions = [P || {P, 'riak@192.168.228.13'} <- riak_core_ring:all_owners(Ring)].</span>**  
-**<span style="font-family:monospace">Node4Partitions = [P || {P, 'riak@192.168.228.14'} <- riak_core_ring:all_owners(Ring)].</span>**  
-**<span style="font-family:monospace">AllPartitions = Node3Partitions ++ Node4Partitions</span>**  
-**<span style="font-family:monospace">[riak_kv_vnode:repair(P) || P <- Partitions].</span>**
+```erlang
+{ok, Ring} = riak_core_ring_manager:get_my_ring().
+Node3Partitions = [P || {P, 'riak@192.168.228.13'} <- riak_core_ring:all_owners(Ring)].
+Node4Partitions = [P || {P, 'riak@192.168.228.14'} <- riak_core_ring:all_owners(Ring)].
+AllPartitions = Node3Partitions ++ Node4Partitions.
+riak_kv_vnode:repair(P) || P <- AllPartitions].
+```
 
-Once the command has been executed, detach from the Riak Attach session by pressing Control-C twice.
+Once the command has been executed, detach from the Riak Attach session by pressing Control-G, q, and then Enter.
 
 #### Killing a Repair
 
