@@ -26,7 +26,7 @@ From that Riak Attach session, we'll first find out which partitions need to be 
 ```erlang
 {ok, Ring} = riak_core_ring_manager:get_my_ring().
 Node3Partitions = [P || {P, 'riak@192.168.228.13'} <- riak_core_ring:all_owners(Ring)].
-Node4Partitions = [P || {P, 'riak@192.168.228.14'} <- riak_core_ring:all_owners(Ring)].
+Node6Partitions = [P || {P, 'riak@192.168.228.16'} <- riak_core_ring:all_owners(Ring)].
 AllPartitions = Node3Partitions ++ Node4Partitions.
 riak_kv_vnode:repair(P) || P <- AllPartitions].
 ```
@@ -38,3 +38,6 @@ Once the command has been executed, detach from the Riak Attach session by press
 Repair Operations are often discouraged because they can be very resource intensive. Currently there is no easy way to kill an individual repair; the only option is to kill all repairs targeting a given node.
 
 This is done by opening a Riak Attach session on the node performing the repair, and running **<span style="font-family:monospace">riak\_core\_vnode\_manager:kill\_repairs(killed\_by\_user).</span>**.
+
+You can also throttle repairs by using the **<span style="font-family:monospace">riak-admin transfer-limit</span>** command.
+
