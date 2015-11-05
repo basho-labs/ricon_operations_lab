@@ -96,7 +96,7 @@ Now that you are connected to *node4*, run this series of commands:
     sudo su -
     riak-admin cluster join riak@192.168.228.11
     
->**<span style="color:red">Warning</span>**:  Do not commit the plat at this point.
+>**<span style="color:red">Warning</span>**:  Do not commit the plan at this point.
 
 Run the *force-replace* of the old *Node4* node name with the new *Node4* node name.
 
@@ -143,7 +143,7 @@ Commit the plan.
 
     riak-admin cluster commit
 
-Once that is done, the node will have all of the ownership associated with the dead node's nodename aggigned to it.  It will also hand off any data back into the cluster that it received while it was a cluster of one.  Monitor the output of `riak-admin transfers` to determine when handoff is complete.
+Once that is done, the node will have all of the ownership associated with the dead node's nodename assigned to it.  It will also hand off any data back into the cluster that it received while it was a cluster of one.  Monitor the output of `riak-admin transfers` to determine when handoff is complete.
 
 
 Unfortunately, we are still going to have inconsistency unless we read every object in our cluster.  Well, we actually have a plan for that that we discuss in our final lab of the day.
