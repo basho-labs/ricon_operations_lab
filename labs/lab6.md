@@ -280,7 +280,7 @@ Press Enter and you should see the following:
 A typical use of riak attach is to run snippets provided by Basho support.  One such snippet will collect the partitions owned by a specific node.  We will use this snippet in a later lab:
 
 ```erlang
-Ring = riak_core_ring_manager:get_my_ring().
+{ok,Ring} = riak_core_ring_manager:get_my_ring().
 Partitions = [P || {P, 'riak@192.168.211.11'} <- riak_core_ring:all_owners(Ring)].
 [riak_kv_vnode:repair(P) || P <- Partitions].
 ```
