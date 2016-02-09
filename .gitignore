@@ -5,6 +5,7 @@ data/work
 *.rpm
 clusters/*
 data/app
+labs/built.md
 
 # OSX Items to ignore
 .DS_Store
