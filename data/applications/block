@@ -1,0 +1,11 @@
+#!/bin/sh
+INPUT="$(echo $1 | sed 's/[^.0-9/]//g')"
+COMMENT="$2"
+if [ "x$COMMENT" == "x" ]
+then
+        iptables -I BLOCK -s $INPUT -j DROP
+else
+        iptables -I BLOCK -s $INPUT -m comment --comment "$COMMENT" -j DROP
+fi
+/usr/local/sbin/blocklist
+

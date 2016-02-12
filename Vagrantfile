@@ -13,6 +13,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.username = "vagrant"
   config.ssh.password = "vagrant"
 
+  config.vm.provision "all", type: "shell", path:"bin/provision_all.sh"
+
   config.vm.define "app" do |app|
     app.vm.hostname = "app.riak.local"
     app.vm.network "private_network", ip: "192.168.228.10"
