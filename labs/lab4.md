@@ -115,12 +115,12 @@ To 10?
 
 You can see what happens when you fork the program to perform a lot of small PUTs into one bucket, and a few large PUTs into another (you'll have to send **<span style="font-family:monospace">kill</span>** signals to the returned PIDs to stop these running),
 
-**<span style="font-family:monospace">./load\_generator.rb -b "small" -s 2048 -l 200 &</span>**  
-**<span style="font-family:monospace">./load\_generator.rb -b "large" -s 5242880 -l 10 &</span>**
+**<span style="font-family:monospace">./load\_generator.rb -b "small" -s 2048 -n 200 &</span>**  
+**<span style="font-family:monospace">./load\_generator.rb -b "large" -s 5242880 -n 10 &</span>**
 
 You can see what happens with an arbitrarily high PUT limit (hint: It might crash something. Let's find out!)
 
-**<span style="font-family:monospace">./load\_generator.rb -b "large" -s 5242880 -l 10000000</span>**
+**<span style="font-family:monospace">./load\_generator.rb -b "large" -s 5242880 -n 10000000</span>**
 
 Go ahead and start experimenting!
 
